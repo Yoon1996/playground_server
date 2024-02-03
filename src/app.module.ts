@@ -10,6 +10,8 @@ import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
+import { AuthGuard } from './auth/auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -30,8 +32,8 @@ import { UserService } from './user/user.service';
     HttpModule,
   ],
   controllers: [AppController, UserController, AuthController],
-  providers: [AppService, UserService, AuthService
-    // { provide: APP_GUARD, useClass: AuthGuard }
+  providers: [AppService, UserService, AuthService,
+    { provide: APP_GUARD, useClass: AuthGuard }
   ],
 })
 export class AppModule { }

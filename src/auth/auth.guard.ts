@@ -8,6 +8,17 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
+        //URL 정규식 검사
+        //token 이 없어도 통신할 수 있는 URL return true  보내기
+        const url = request.url
+        const loginRegex = /\/auth\/login$/;
+        const socialRegex = /\/auth\/social-login$/;
+        const registRegex = /\/user\/regist$/
+        const regexList = [loginRegex, socialRegex, registRegex]
+        if (regexList.map((regex) => regex.test(url))) {
+            return true
+        }
+
         const token = this.extractTokenFromHeader(request)
         if (!token) {
             throw new UnauthorizedException()
