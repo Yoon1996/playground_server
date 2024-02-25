@@ -1,3 +1,5 @@
+import { WeatherService } from './weather/weather.service';
+import { WeatherController } from './weather/weather.controller';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -31,8 +33,10 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     HttpModule,
   ],
-  controllers: [AppController, UserController, AuthController],
-  providers: [AppService, UserService, AuthService,
+  controllers: [
+    WeatherController, AppController, UserController, AuthController],
+  providers: [
+    WeatherService, AppService, UserService, AuthService,
     { provide: APP_GUARD, useClass: AuthGuard }
   ],
 })

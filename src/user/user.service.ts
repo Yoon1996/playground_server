@@ -1,4 +1,4 @@
-import { Body, Injectable, Param, UnauthorizedException } from '@nestjs/common';
+import { Body, Injectable, NotFoundException, Param, Req, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepo: Repository<User>
+
     ) {
 
     }
@@ -65,18 +66,43 @@ export class UserService {
     }
 
     //연락처 변경
-    async changeProfile(@Body() body: UpdateUserDto, @Param() param: any): Promise<any> {
-        const { phoneNumber, birth, password } = body
-        const user = await this.findOneById(param.id)
-        console.log('user: ', user);
-        if (phoneNumber) {
-            user.phoneNumber = phoneNumber
-            await this.userRepo.save(body)
-        } else if (birth) {
-            console.log("birth 있다")
-        } else if (password) {
-            console.log("비번이다")
+    async changePhoneNumber(@Body() body: UpdateUserDto, @Param() param: any): Promise<any> {
+        const { phoneNumber } = body
+        const user = await this.userRepo.findOne({
+            where: {
+                id: param.id
+            }
+        })
+        if (!user) {
+            throw new NotFoundException('해당 user의 정보가 존재하지 않습니다.');
         }
-        return body
+        await this.userRepo.update(param.id, body)
+        const updateUser = await this.userRepo.findOne({
+            where: {
+                id: param.id
+            }
+        })
+        return updateUser
+    }
+
+    //생년월일 변경
+    async changeBirth(@Body() body: UpdateUserDto, @Param() param: any): Promise<any> {
+        const { birth } = body
+        console.log(birth)
+        const user = await this.userRepo.findOne({
+            where: {
+                id: param.id
+            }
+        })
+        if (!user) {
+            throw new NotFoundException('해당 user의 정보가 존재하지 않습니다.');
+        }
+        await this.userRepo.update(param.id, body)
+        const updateUser = await this.userRepo.findOne({
+            where: {
+                id: param.id
+            }
+        })
+        return updateUser
     }
 }

@@ -9,6 +9,7 @@ import { User } from 'src/entity/user.entity';
 import { CreateUserDto } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
 import { Like, Repository } from 'typeorm';
+import { AuthGuard } from './auth.guard';
 
 @Injectable()
 export class AuthService {
@@ -18,8 +19,34 @@ export class AuthService {
         private userRepo: Repository<User>,
         private jwtService: JwtService,
         private configService: ConfigService,
-        private userService: UserService
+        private userService: UserService,
     ) { }
+
+    //토큰인증
+    async tokenVerify(@Req() req: any) {
+        try {
+            if (!req?.headers?.authorization) throw new UnauthorizedException
+            const tokenList = req.headers.authorization.split(' ')
+            if (tokenList.length < 1) throw new UnauthorizedException
+            const token = tokenList[1]
+            const result = await this.jwtService.verifyAsync(
+                token,
+                {
+                    secret: process.env.ACCESS_TOKEN_SECRET_KEY
+                }
+            );
+
+            const user = await this.userService.findOneByEmail(result.email)
+            const jwt = this.getAccessToken({ user })
+            const { password, ...userWithoutPassword } = user;
+            const userInfo = { ...userWithoutPassword, jwt }
+            req.userInfo = userInfo
+            return userInfo
+        }
+        catch (err) {
+            console.log('err: ', err);
+        }
+    }
 
     //로그인
     async login(email: string, password: string): Promise<any> {
@@ -35,14 +62,13 @@ export class AuthService {
         const jwt = this.getAccessToken({ user })
         const { password: dummy, ...userWithoutPassword } = user;
         const userInfo = { ...userWithoutPassword, jwt }
-        console.log('userInfo: ', userInfo);
-        console.log('dummy: ', dummy);
+        // console.log('userInfo: ', userInfo);
+        // console.log('dummy: ', dummy);
         return userInfo
 
     }
     //Access Token 발급
     getAccessToken({ user }): string {
-        console.log(process.env.ACCESS_TOKEN_SECRET_KEY)
         return this.jwtService.sign(
             {
                 email: user.email,

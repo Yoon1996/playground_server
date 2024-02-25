@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Get, Logger, Param, Post, Put, Query, Res } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Logger, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { AuthService } from 'src/auth/auth.service';
@@ -39,8 +39,14 @@ export class UserController {
     }
 
     //연락처 변경
-    @Put('/change-profile/:id')
+    @Put('/change-phoneNumber/:id')
     async changeProfile(@Body() profile: UpdateUserDto, @Param() id: number) {
-        return this.userService.changeProfile(profile, id)
+        return this.userService.changePhoneNumber(profile, id)
+    }
+
+    //생년월일 변경
+    @Put('/change-birth/:id')
+    async changeBirth(@Body() profile: UpdateUserDto, @Param() id: number) {
+        return this.userService.changeBirth(profile, id)
     }
 }
