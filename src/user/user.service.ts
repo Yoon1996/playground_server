@@ -1,9 +1,9 @@
-import { Body, Injectable, NotFoundException, Param, Req, UnauthorizedException } from '@nestjs/common';
+import { Body, Injectable, NotFoundException, Param, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { User } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
-import * as bcrypt from 'bcrypt';
+import { CreateUserDto, UpdateUserDto, changePwDto } from './user.dto';
 
 
 @Injectable()
@@ -88,7 +88,6 @@ export class UserService {
     //생년월일 변경
     async changeBirth(@Body() body: UpdateUserDto, @Param() param: any): Promise<any> {
         const { birth } = body
-        console.log(birth)
         const user = await this.userRepo.findOne({
             where: {
                 id: param.id
@@ -104,5 +103,20 @@ export class UserService {
             }
         })
         return updateUser
+    }
+
+    //비밀번호 변경
+    async changePw(@Body() body: changePwDto, @Param() param: any): Promise<any> {
+        const user = await this.findOneById(param.id)
+        const isAuth = await bcrypt.compare(body.oldPassword, user.password)
+        const { password } = body
+        console.log('password: ', password);
+        if (!isAuth) throw new UnprocessableEntityException('현재 비밀번호가 일치하지 않습니다.')
+        if (body.oldPassword === body.password) throw new UnprocessableEntityException('새 비밀번호는 현재 비밀번호와 일치하면 안됩니다.')
+        if (body.password !== body.newPassword) throw new UnprocessableEntityException('입력하신 새 비밀번호가 일치 하지 않습니다.')
+        const newPassword = await this.hashPassword(password)
+        console.log('newPassword: ', newPassword);
+        await this.userRepo.update(param.id, { password: newPassword })
+        return '비밀번호 변경 완료'
     }
 }

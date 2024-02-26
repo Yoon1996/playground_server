@@ -67,3 +67,17 @@ export class loginUserDto {
     @IsString()
     password: string
 }
+
+export class changePwDto {
+    @IsString()
+    @IsOptional()
+    oldPassword?: string
+
+    @IsString()
+    @IsOptional()
+    password?: string;
+
+    @IsString()
+    @IsOptional()
+    newPassword?: string
+}

@@ -1,7 +1,6 @@
-import { Body, ConflictException, Controller, Get, Logger, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { CreateUserDto, UpdateUserDto, changePwDto } from './user.dto';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
-import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
@@ -48,5 +47,11 @@ export class UserController {
     @Put('/change-birth/:id')
     async changeBirth(@Body() profile: UpdateUserDto, @Param() id: number) {
         return this.userService.changeBirth(profile, id)
+    }
+
+    //비밀번호 변경
+    @Put('/change-pw/:id')
+    async changePw(@Body() profile: changePwDto, @Param() id: number) {
+        return this.userService.changePw(profile, id)
     }
 }
