@@ -1,9 +1,8 @@
 import { HttpService } from '@nestjs/axios';
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UnauthorizedException } from '@nestjs/common';
 import { loginUserDto } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +13,16 @@ export class AuthController {
     //토큰인증
     @Get('token-verify')
     async tokenVerify(@Req() req: any) {
-        return this.authService.tokenVerify(req)
+        try {
+            return this.authService.tokenVerify(req)
+        } catch (error) {
+            console.log('error: ', error);
+            console.log('error.message: ', error.message);
+            if (error.message === 'JWT_EXPIRED') {
+                throw new UnauthorizedException()
+            }
+
+        }
     }
     //로그인
     @HttpCode(HttpStatus.OK)

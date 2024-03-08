@@ -44,7 +44,13 @@ export class AuthService {
             return userInfo
         }
         catch (err) {
-            console.log('err: ', err);
+            if (err.message === 'jwt expired') {
+                throw new Error('JWT_EXPIRED')
+            } else if (err.message === 'jwt malformed') {
+                throw new Error('JWT_MALFORMED')
+            } else {
+                throw new Error('INTERNAL_SERVER_ERROR')
+            }
         }
     }
 
@@ -76,7 +82,7 @@ export class AuthService {
             },
             {
                 secret: process.env.ACCESS_TOKEN_SECRET_KEY,
-                expiresIn: '15m'
+                expiresIn: '1d'
             }
         )
     }

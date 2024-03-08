@@ -16,7 +16,6 @@ export class UserController {
 
     @Post('/regist')
     async createUser(@Body() CreateUserDto: CreateUserDto) {
-        const { email, password, sex, name, birth, phoneNumber } = CreateUserDto
         const alreadyUser = await this.userService.findOneByEmail(CreateUserDto.email)
         if (alreadyUser) {
             throw new ConflictException('DUPLICATED_EMAIL')
