@@ -15,7 +15,7 @@ export class GymService {
     async findAll(): Promise<any> {
         try {
             const gyms = await this.gymRepo.find()
-            return gyms.length
+            return gyms
         }
         catch (err) {
             console.log('err: ', err);
@@ -28,7 +28,23 @@ export class GymService {
             take: 12,
             skip: (page - 1) * 12
         })
-        console.log(page)
+        // console.log(page)
         return gyms
+    }
+
+    //gym 전체길이
+    async gymListhLength(): Promise<any> {
+        const gymsLength = (await this.gymRepo.find()).length
+        return gymsLength
+    }
+
+    //검색어 입력해서 리스트 불러오기
+    async search(search: string): Promise<any> {
+        const filteredGyms = await this.gymRepo.find({
+            where: {
+
+            }
+        })
+        return search
     }
 }
