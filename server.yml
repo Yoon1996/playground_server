@@ -1,0 +1,21 @@
+name: playground-server
+
+on:
+push:
+branches: -main
+
+jobs:
+deploy:
+name: deploy
+runs-on: ubuntu-latest
+
+steps:
+-name:  excusting remote ssh commands
+uses: appleboy/ssh-action@master
+with: host: ${{secret.REMOTE_IP}}
+username: ${{secret.RMOTE_USER}}
+key: ${{secret.REMOTE_PRIVATE_KEY}}
+port: ${{secret.REMOTE_SSH_PORT}}
+script: |
+cd /home/ubuntu/playground_server
+git pull origin main
