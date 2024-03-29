@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsEnum, IsNumber, IsOptional, IsString, isString } from "class-validator";
+import { IsDateString, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 import { sexType } from "src/entity/user.entity";
 import { IUserModel } from "src/model/user.model";
 

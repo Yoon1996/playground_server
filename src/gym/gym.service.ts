@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Gym } from 'src/entity/gym.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
+import { QueryDto } from './gym.dto';
 
 @Injectable()
 export class GymService {
@@ -22,29 +23,53 @@ export class GymService {
         }
     }
 
-    //페이지네이션
-    async paginate(page: number): Promise<any> {
-        const gyms = await this.gymRepo.find({
-            take: 12,
-            skip: (page - 1) * 12
-        })
-        // console.log(page)
-        return gyms
+    //gym filter
+    async filter(query?: QueryDto): Promise<any> {
+        const db = this.gymRepo
+            .createQueryBuilder("gym")
+            .take(12)
+            .skip((query.page - 1) * 12)
+        if (query.search) {
+            db.andWhere({
+                name: Like(`%${query.search}%`)
+            })
+        }
+        if (query.region) {
+            db.andWhere({
+                name: Like(`%${query.region}%`)
+            })
+        }
+        if (query.sportsType) {
+            db.andWhere({
+                sportsType: Like(`%${query.sportsType}%`)
+            })
+        }
+        if (query.parkingInfo) {
+            db.andWhere({
+                parkingInfo: Like(`%${query.parkingInfo}%`)
+            })
+        }
+        return { list: await db.getMany(), length: await db.getCount() }
     }
 
-    //gym 전체길이
-    async gymListhLength(): Promise<any> {
-        const gymsLength = (await this.gymRepo.find()).length
-        return gymsLength
-    }
+    //gym 카테고리 가져오기
+    async category(): Promise<any> {
+        try {
+            const categories = await this.gymRepo.find({
+                select: ['region', 'sportsType']
+            })
 
-    //검색어 입력해서 리스트 불러오기
-    async search(search: string): Promise<any> {
-        const filteredGyms = await this.gymRepo.find({
-            where: {
+            const categoryRegions = categories.map(category => category.region);
+            const categorySportsType = categories.map(category => category.sportsType);
 
-            }
-        })
-        return search
+            //배열 중복 제거해주는 list 함수
+            const setList = (list: string[]) => {
+                return [...new Set(list)].sort();
+            };
+            return { region: setList(categoryRegions), sportsType: setList(categorySportsType) }
+        }
+        catch (err) {
+            console.log('err: ', err);
+        }
     }
 }
