@@ -59,12 +59,11 @@ export class User implements Partial<IUserModel>{
     })
     withDraw?: boolean;
 
-    @CreateDateColumn()
+    @CreateDateColumn({})
     createdAt?: Date;
 
     @UpdateDateColumn({
     })
     updatedAt?: Date;
-
 }
 

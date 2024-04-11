@@ -72,4 +72,23 @@ export class GymService {
             console.log('err: ', err);
         }
     }
+
+    //gym detail 게시글 가져오기
+    async gymDetail(id: number): Promise<any> {
+        console.log('id: ', id);
+
+        try {
+            const gymInfo = await this.gymRepo.findOne({
+                where: {
+                    id: id
+                }
+            })
+            console.log('gymInfo: ', gymInfo);
+            return gymInfo
+        }
+        catch (err) {
+            console.log('err: ', err);
+
+        }
+    }
 }

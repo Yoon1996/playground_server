@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { QueryDto } from './gym.dto';
 import { GymService } from './gym.service';
 
@@ -21,8 +21,15 @@ export class GymController {
         return gyms
     }
 
+    //카테고리 리스트 가져오기
     @Get('category')
     async category() {
         return await this.gymService.category()
+    }
+
+    //gym detail 글 가져오기
+    @Get('gym_detail/:id')
+    async gymDetail(@Param('id') id: number) {
+        return await this.gymService.gymDetail(id)
     }
 }

@@ -4,12 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
-import * as jwt from 'jsonwebtoken'
 import { User } from 'src/entity/user.entity';
-import { CreateUserDto } from 'src/user/user.dto';
 import { UserService } from 'src/user/user.service';
 import { Like, Repository } from 'typeorm';
-import { AuthGuard } from './auth.guard';
 
 @Injectable()
 export class AuthService {
@@ -130,8 +127,6 @@ export class AuthService {
             const jwt = this.getAccessToken({ user })
             const { password: dummy, ...userWithoutPassword } = user;
             const userInfo = { ...userWithoutPassword, jwt }
-            console.log('userInfo: ', userInfo);
-            console.log('dummy: ', dummy);
             return userInfo
         }
         catch (err) {

@@ -1,6 +1,8 @@
+import { ReservationService } from './reservation/reservation.service';
+import { ReservationController } from './reservation/reservation.controller';
 import { GymService } from './gym/gym.service';
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,6 +18,7 @@ import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { WeatherController } from './weather/weather.controller';
 import { WeatherService } from './weather/weather.service';
+import { UserInfoMiddleware } from './middleware/user.middleware';
 
 @Module({
   imports: [
@@ -36,12 +39,20 @@ import { WeatherService } from './weather/weather.service';
     HttpModule,
   ],
   controllers: [
+    ReservationController,
     GymController,
     WeatherController, AppController, UserController, AuthController],
   providers: [
+    ReservationService,
     GymService,
     WeatherService, AppService, UserService, AuthService,
-    { provide: APP_GUARD, useClass: AuthGuard }
+    { provide: APP_GUARD, useClass: AuthGuard, }
   ],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserInfoMiddleware)
+      .forRoutes({ path: '/', method: RequestMethod.ALL })
+  }
+}
