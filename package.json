@@ -9,7 +9,7 @@
     "build": "nest build",
     "start": "nest start",
     "start:dev": "TZ=Asia/Seoul nest start --watch",
-    "pm2:prod": "pm2 start ecosystem.config.js --env prod",
+    "pm2:prod": "pm2 start ecosystem.config.js",
     "start:debug": "nest start --debug --watch"
   },
   "dependencies": {
