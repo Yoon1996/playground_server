@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 import { UserService } from "src/user/user.service";
@@ -18,36 +18,35 @@ export class AuthGuard implements CanActivate {
         const registRegex = /\/user\/regist$/
         const regexList = [loginRegex, socialRegex, registRegex]
         if (regexList.map((regex) => regex.test(url))) {
-            const token = this.extractTokenFromHeader(request)
+            return true
+        }
+        const token = this.extractTokenFromHeader(request)
+        if (!token) {
+
+            throw new UnauthorizedException()
+        }
+        try {
             const payload = await this.jwtService.verifyAsync(
                 token,
                 {
                     secret: process.env.ACCESS_TOKEN_SECRET_KEY
                 }
-            )
-            const user = await this.userService.findOneByEmail(payload.email)
-            const jwt = this.authService.getAccessToken({ user })
-            const { password, ...userWithoutPassword } = user;
-            const userInfo = { ...userWithoutPassword, jwt }
-            request.userInfo = userInfo
-            return true
+            );
+            request.user = payload;
+        } catch {
+            throw new UnauthorizedException()
         }
-
-        // if (!token) {
-
-        //     throw new UnauthorizedException()
-        // }
-        // try {
-        //     const payload = await this.jwtService.verifyAsync(
-        //         token,
-        //         {
-        //             secret: process.env.ACCESS_TOKEN_SECRET_KEY
-        //         }
-        //     );
-        //     request.user = payload;
-        // } catch {
-        //     throw new UnauthorizedException()
-        // }
+        const payload = await this.jwtService.verifyAsync(
+            token,
+            {
+                secret: process.env.ACCESS_TOKEN_SECRET_KEY
+            }
+        )
+        const user = await this.userService.findOneByEmail(payload.email)
+        const jwt = this.authService.getAccessToken({ user })
+        const { password, ...userWithoutPassword } = user;
+        const userInfo = { ...userWithoutPassword, jwt }
+        request.userInfo = userInfo
         return true
     }
 

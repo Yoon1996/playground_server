@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateReservationDto } from './reservation.dto';
 import { ReservationService } from './reservation.service';
@@ -22,15 +22,18 @@ export class ReservationController {
     }
 
     @Delete("/delete_reservation/:gymId")
-    async deleteReservation(@Param('gymId') param: any, @Req() req: any) {
+    async deleteReservation(@Param('gymId') param: any) {
+
         try {
-            if (!req.userInfo) {
-                throw new NotFoundException
-            }
             return await this.reserveService.deleteReservation(param)
         }
         catch (err) {
             console.log('err: ', err);
         }
+    }
+
+    @Get("/can_not_reservation/:date")
+    async canNotReservation(@Param('date') param: any) {
+        return await this.reserveService.canNotReservation(param)
     }
 }

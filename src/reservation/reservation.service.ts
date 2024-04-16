@@ -17,7 +17,6 @@ export class ReservationService {
     //예약하기
     async create(create: CreateReservationDto) {
         const reservation = this.reserveRepo.create(create)
-        format(new Date(create.date), "yy-mm--dd")
         return await this.reserveRepo.save(reservation)
     }
 
@@ -30,6 +29,7 @@ export class ReservationService {
                     userId: id
                 }
             })
+            console.log('userReservation: ', userReservation[0].date);
             return userReservation
         }
         catch (err) {
@@ -46,6 +46,20 @@ export class ReservationService {
         catch (err) {
             console.log('err: ', err);
 
+        }
+    }
+
+    async canNotReservation(date: Date): Promise<any> {
+        const dateString = format(new Date(date), "yy-mm-dd")
+        console.log('dateString: ', dateString);
+        try {
+            const dd = this.reserveRepo.createQueryBuilder("reservation")
+                .where({ date: date })
+                .getMany()
+            return dd
+        }
+        catch (err) {
+            console.log('err: ', err);
         }
     }
 }

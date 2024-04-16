@@ -22,3 +22,6 @@ jobs: # 워크플로우 내에서 수행할 작업을 정의
             ls
             cd /home/ubuntu/playground_server
             git pull origin main
+            pm2 kill
+            npm i
+            npm run pm2
