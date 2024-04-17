@@ -21,4 +21,4 @@ jobs: # 워크플로우 내에서 수행할 작업을 정의
           script: | #실행할 스크림트 설정12334
             cd /home/ubuntu/playground/playground_server
             git pull origin main
-            
+            //돼
