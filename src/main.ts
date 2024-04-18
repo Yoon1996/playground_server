@@ -18,6 +18,6 @@ async function bootstrap() {
       transform: true
     })
   )
-  await app.listen(8080);
+  await app.listen(3000);
 }
 bootstrap();
