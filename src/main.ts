@@ -3,7 +3,10 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: "http://playground-client.s3-website.ap-northeast-2.amazonaws.com"
+  })
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -11,7 +14,6 @@ async function bootstrap() {
       transform: true
     })
   )
-  await app.listen(8080);
-  console.log(process)
+  await app.listen(3000);
 }
 bootstrap();
