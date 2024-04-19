@@ -23,6 +23,7 @@ jobs: # 워크플로우 내에서 수행할 작업을 정의
             git pull origin main
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
+            nvm install <node_version>
             pm2 kill
             npm i
             npm run pm2:prod
