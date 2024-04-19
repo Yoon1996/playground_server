@@ -14,8 +14,8 @@ jobs: # 워크플로우 내에서 수행할 작업을 정의
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
-          
+          node-version: '20.x'
+
       - name: excusting remote ssh commands # 해당 단계의 이름을 원격 ssh 명령 실행으로 설정
         uses: appleboy/ssh-action@master # appleboy/ssh-action 사용
         with: #입력 변수 설정
