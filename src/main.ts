@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const corsOptions = {
-    origin: ['https://d19ms2sq0w2bcn.cloudfront.net'],
+    origin: ['https://d19ms2sq0w2bcn.cloudfront.net', 'http://d19ms2sq0w2bcn.cloudfront.net'],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'], // 필요한 HTTP 메서드 지정
     allowedHeaders: ['Content-Type', 'Authorization'], // 필요한 헤더 지정
     preflightContinue: false,
