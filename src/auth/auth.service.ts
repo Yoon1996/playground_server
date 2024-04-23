@@ -87,7 +87,9 @@ export class AuthService {
     //소셜로그인
     async googleLogin(@Req() req: any): Promise<any> {
         const GOOGLE_ID = process.env.OAUTH_GOOGLE_ID
+        console.log('GOOGLE_ID: ', GOOGLE_ID);
         const GOOGLE_SECRET_KEY = process.env.OAUTH_SECRET_KEY
+        console.log('GOOGLE_SECRET_KEY: ', GOOGLE_SECRET_KEY);
         try {
             const client = new OAuth2Client(GOOGLE_ID, GOOGLE_SECRET_KEY, "postmessage");
             const data = await client.getToken(req.body.code)
